@@ -1,6 +1,9 @@
 # Auto Ingestion from local machine to s3 and then to snowflake
 ## A. Uploading files from local machine to AWS S3 bucket
 #### It uploads the data files from local computer to the Amazon AWS S3 bucket using the user credentials
+##### Prerequisite
+[boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html) 
+,aws_access_key_id and aws_secret_access_key which can be download from aws -> services -> IAM -> Role
 - First step is to import boto3
 - And then import os
 - store aws_access_key_id and aws_secret_access_key (user's credentials from aws) in session
