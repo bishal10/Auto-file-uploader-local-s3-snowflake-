@@ -1,0 +1,31 @@
+//auto ingestion using new role 
+//create storage integration
+create or replace storage INTEGRATION SNOWPIPE_TEST_INTEGRATION
+    TYPE = EXTERNAL_STAGE
+    STORAGE_PROVIDER = S3
+    ENABLED = TRUE
+    STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::064618993222:role/snowpipe-test-role'
+    STORAGE_ALLOWED_LOCATIONS = ('s3://bishal-first-data-bucket/ingest/');
+
+//create stage
+create or replace stage NEWSDB.NEWS_SCHEMA.SNOWPIPE_TEST_STAGE
+    url = 's3://bishal-first-data-bucket/ingest/'
+    storage_integration = SNOWPIPE_TEST_INTEGRATION;
+    
+//create pipe
+create pipe NEWSDB.NEWS_SCHEMA.SNOWPIPE_TEST_PIPE auto_ingest = true AS
+    COPY INTO NEWSDB.NEWS_SCHEMA.NEWSDATA1
+    FROM @NEWSDB.NEWS_SCHEMA.SNOWPIPE_TEST_STAGE
+    file_format = (type = 'CSV');
+            
+//show pipe
+show pipes;
+
+desc stage NEWSDB.NEWS_SCHEMA.SNOWPIPE_TEST_STAGE;
+
+DESC INTEGRATION SNOWPIPE_TEST_INTEGRATION;
+
+
+select count(*) from NEWSDB.NEWS_SCHEMA.NEWSDATA1;
+
+
