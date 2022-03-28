@@ -29,3 +29,11 @@ DESC INTEGRATION SNOWPIPE_TEST_INTEGRATION;
 select count(*) from NEWSDB.NEWS_SCHEMA.NEWSDATA1;
 
 
+//To handle the json file create file format
+create or replace file format jsonformat //<name_of_format
+    type = 'JSON'
+    strip_outer_array = true;
+
+//While creating pipe replace 'file_format = (type = 'CSV');' with
+file_format = jsonformat
+on_error = 'skip_file';
