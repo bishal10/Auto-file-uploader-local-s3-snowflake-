@@ -21,3 +21,9 @@
 - Create pipe in Snowflake
 - Lastly update trust relationship of new role in IAM user with snowflake Iam user id and external_id given by snowpipe
 #### Please, refer to [Automating Snowpipe for Amazon S3](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#automating-snowpipe-for-amazon-s3 "Reference link to official documentation") for more detail approach of part B.
+
+
+### How to handle JSON files
+- While handling json file all steps are some except creating pipe and creating table in part B
+- Create table with one column of data type variant
+- while creating pipe you need to specify the file_format as a json. Please refer to the sql code file above.
