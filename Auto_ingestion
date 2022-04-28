@@ -1,0 +1,55 @@
+create database json_db;
+use database json_db;
+create schema json_schema;
+use schema json_schema;
+
+//Creating table with one column with data type variant which can basically store any data
+create table json_table(
+json_data_raw VARIANT
+);
+
+//auto ingestion using new role 
+//create storage integration
+create or replace storage INTEGRATION JSON_INTEGRATION
+    TYPE = EXTERNAL_STAGE
+    STORAGE_PROVIDER = S3
+    ENABLED = TRUE
+    STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::064618993222:role/json-data-automate-role'
+    STORAGE_ALLOWED_LOCATIONS = ('s3://bishal-json-data-bucket/');
+desc integration json_integration;
+//create stage
+create or replace stage JSON_DB.JSON_SCHEMA.JSON_STAGE
+    url = 's3://bishal-json-data-bucket/'
+    storage_integration = JSON_INTEGRATION;
+    
+//create pipe
+create or replace pipe JSON_DB.JSON_SCHEMA.JSON_PIPE auto_ingest = true AS
+    COPY INTO JSON_DB.JSON_SCHEMA.JSON_TABLE
+    FROM @JSON_DB.JSON_SCHEMA.JSON_STAGE
+    file_format = jsonformat
+    on_error = 'skip_file';  
+
+COPY INTO JSON_DB.JSON_SCHEMA.JSON_TABLE
+FROM @JSON_DB.JSON_SCHEMA.JSON_STAGE
+file_format = jsonformat
+on_error = 'skip_file';           
+
+show stages;
+//show pipe
+show pipes;
+select system$pipe_status('JSON_DB.JSON_SCHEMA.JSON_PIPE');
+
+list@stage/subfolder;
+
+create or replace file format jsonformat
+    type = 'JSON'
+    strip_outer_array = true;
+    
+//Listing json data in csv view
+select json:name, json:age, json:nationality, json:general_stats:red_cards as red_cards, json:offensive_stats:goals as total_goal from test;
+
+select roam:chart:result from roam_json;
+
+
+select list.VALUE:events from roam_json a,
+lateral flatten (input => roam:chart:result) list;
