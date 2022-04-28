@@ -1,0 +1,28 @@
+//auto ingestion by creating stage manually
+
+create database testDB;
+use database testDB;
+
+create schema testSchema;
+use schema testSchema;
+
+
+create table NewsData2(
+UUSERID VARCHAR(250),
+ARTICLEID VARCHAR(250),
+CLICK VARCHAR(250),
+  TIMEDURATION VARCHAR(250),
+  VISITDATE VARCHAR(250),
+  VISITTIME VARCHAR(250),
+  CATEGORIES VARCHAR(250)
+);
+
+
+copy into NEWSDATA2 from @MYTESTSTAGE
+file_format = (type = csv field_delimiter = ',' skip_header = 1);
+
+copy into NEWSDATA1 from @MYS3
+file_format = (type = csv field_delimiter = ',' skip_header = 1);
+
+
+select * from NEWSDATA2 limit 10;
